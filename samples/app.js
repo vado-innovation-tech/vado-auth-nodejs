@@ -2,7 +2,7 @@
 const { default: axios } = require('axios');
 const express = require('express');
 
-const auth = require('auth_service');
+const auth = require('vado-auth-nodejs');
 
 const app = express();
 
@@ -38,6 +38,14 @@ app.post('/login', async (req, res) => {
 
 });
 
+app.get('/verify-access', async (req, res) => {
+    const accessToken = req.headers.authorization.split(' ')[1];
+
+    console.log(accessToken);
+    const userPayload = await auth.verifyAccessToken(accessToken);
+
+    res.send(userPayload);
+});
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
