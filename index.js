@@ -1,6 +1,13 @@
 
 const axios = require('axios');
 
+const endpoint = {
+    register: '/auth/register',
+    login: '/auth/login',
+    logout: '/auth/logout',
+    verifyAccessToken: '/auth/verify/access',
+}
+
 class Auth {
     #authentication_server_url
     constructor() {
@@ -25,7 +32,7 @@ class Auth {
         var config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: this.#authentication_server_url + '/auth/register',
+            url: this.#authentication_server_url + endpoint.register,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -51,11 +58,36 @@ class Auth {
         var config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: this.#authentication_server_url + '/auth/login',
+            url: this.#authentication_server_url + endpoint.login,
             headers: {
                 'Content-Type': 'application/json'
             },
             data: data
+        };
+
+        try {
+            const result = await axios(config)
+            return result.data;
+        } catch (error) {
+            if (error.response.status === 401) {
+                return error.response.data;
+            }
+        }
+    }
+
+    async signOut() {
+        // TODO
+    }
+
+    async verifyAccessToken(token) {
+        var config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: this.#authentication_server_url + endpoint.verifyAccessToken,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
         };
 
         try {
